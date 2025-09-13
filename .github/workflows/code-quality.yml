@@ -7,44 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  fastmcp-quality:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: fastmcp
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-        
-    - name: Install uv
-      uses: astral-sh/setup-uv@v3
-      
-    - name: Install dependencies
-      run: uv sync
-      
-    - name: Run code formatting check
-      run: uv run ruff format --check
-      
-    - name: Run linting
-      run: uv run ruff check
-      
-    - name: Run type checking
-      run: uv run ty check
-      
-    - name: Run tests
-      run: uv run pytest
-
   aurora-mcp-quality:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: aurora-mcp
+        working-directory: .
     
     steps:
     - name: Checkout code
