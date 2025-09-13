@@ -16,12 +16,10 @@ limitations under the License.
 
 import asyncio
 import logging
-import os
-import subprocess
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any
 
-from ..decorators import development_status, DevelopmentStatus
+from ..decorators import DevelopmentStatus, development_status
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +38,7 @@ class FlutterBuildTool:
         project_path: str,
         target_arch: str = "armv7hl",
         build_type: str = "Release",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build Flutter project for Aurora OS.
 
         Args:
@@ -83,7 +81,7 @@ class FlutterBuildTool:
             logger.error(f"Error building Flutter project: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _build_flutter_bundle(self, project_dir: Path) -> Dict[str, Any]:
+    async def _build_flutter_bundle(self, project_dir: Path) -> dict[str, Any]:
         """Build Flutter bundle."""
         try:
             # Run flutter build linux (as base)
@@ -116,7 +114,7 @@ class FlutterBuildTool:
 
     async def _build_native_app(
         self, project_dir: Path, target_arch: str, bundle_path: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build native Aurora OS app with Flutter embedder."""
         try:
             # Create Aurora OS build directory
@@ -154,7 +152,7 @@ class FlutterBuildTool:
 
     async def _generate_cmake_files(
         self, project_dir: Path, build_dir: Path, target_arch: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate CMakeLists.txt for Aurora OS build."""
         try:
             # Read pubspec.yaml for project info
@@ -162,7 +160,7 @@ class FlutterBuildTool:
 
             pubspec_file = project_dir / "pubspec.yaml"
 
-            with open(pubspec_file, "r") as f:
+            with open(pubspec_file) as f:
                 pubspec = yaml.safe_load(f)
 
             app_name = pubspec.get("name", "flutter_app")
@@ -272,7 +270,7 @@ int main(int argc, char *argv[])
 
     async def _build_cmake_project(
         self, build_dir: Path, target_arch: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Build CMake project for Aurora OS."""
         try:
             commands = [
@@ -325,7 +323,7 @@ int main(int argc, char *argv[])
             return {"success": False, "error": f"Error building CMake project: {e}"}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def setup_embedder(self, project_path: str) -> Dict[str, Any]:
+    async def setup_embedder(self, project_path: str) -> dict[str, Any]:
         """Set up Flutter embedder for Aurora OS project.
 
         Args:

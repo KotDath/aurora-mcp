@@ -19,7 +19,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Callable
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,7 @@ class SFDKOutputFilter:
 
         return False
 
-    def get_progress_from_line(self, line: str) -> Optional[tuple[float, str]]:
+    def get_progress_from_line(self, line: str) -> tuple[float, str] | None:
         """Extract progress percentage and description from build output if available.
 
         Returns:
@@ -191,7 +191,7 @@ def truncate_output(output: str, max_lines: int = 50, max_chars: int = 5000) -> 
 class SFDKWrapper:
     """Wrapper class for SFDK (Sailfish SDK) operations."""
 
-    def __init__(self, aurora_home: Optional[Path] = None):
+    def __init__(self, aurora_home: Path | None = None):
         """Initialize SFDK wrapper.
 
         Args:
@@ -251,7 +251,7 @@ class SFDKWrapper:
             # Check SFDK directory as fallback
             return self.sfdk_path.exists()
 
-    async def get_version(self) -> Dict[str, Any]:
+    async def get_version(self) -> dict[str, Any]:
         """Get SFDK version information.
 
         Returns:
@@ -280,7 +280,7 @@ class SFDKWrapper:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def list_targets(self) -> Dict[str, Any]:
+    async def list_targets(self) -> dict[str, Any]:
         """List available SFDK build targets.
 
         Returns:
@@ -314,7 +314,7 @@ class SFDKWrapper:
             logger.error(f"Error listing SFDK targets: {e}")
             return {"success": False, "error": str(e)}
 
-    def _parse_targets_output(self, output: str) -> List[Dict[str, Any]]:
+    def _parse_targets_output(self, output: str) -> list[dict[str, Any]]:
         """Parse SFDK tools list output to extract targets.
 
         Args:
@@ -368,7 +368,7 @@ class SFDKWrapper:
 
         return targets
 
-    async def get_target_for_arch(self, target_arch: str) -> Optional[str]:
+    async def get_target_for_arch(self, target_arch: str) -> str | None:
         """Get SFDK target name for architecture.
 
         Maps user-provided architecture to actual SFDK target names:
@@ -414,7 +414,7 @@ class SFDKWrapper:
         # Return first available target
         return matching_targets[0]["name"]
 
-    async def configure_target(self, target_name: str) -> Dict[str, Any]:
+    async def configure_target(self, target_name: str) -> dict[str, Any]:
         """Configure SFDK target for building.
 
         Args:
@@ -452,11 +452,11 @@ class SFDKWrapper:
 
     async def execute_command_streaming(
         self,
-        args: List[str],
-        cwd: Optional[Path] = None,
-        context: Optional[Any] = None,  # FastMCP Context
+        args: list[str],
+        cwd: Path | None = None,
+        context: Any | None = None,  # FastMCP Context
         show_output: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute SFDK command with streaming output and real-time context updates.
 
         Args:
@@ -529,8 +529,8 @@ class SFDKWrapper:
             }
 
     async def execute_command(
-        self, args: List[str], cwd: Optional[Path] = None
-    ) -> Dict[str, Any]:
+        self, args: list[str], cwd: Path | None = None
+    ) -> dict[str, Any]:
         """Execute SFDK command with error handling.
 
         Args:
@@ -575,8 +575,8 @@ class SFDKWrapper:
         project_path: Path,
         target_arch: str = "armv7hl",
         build_dir_name: str = "build_amogus",
-        context: Optional[Any] = None,
-    ) -> Dict[str, Any]:
+        context: Any | None = None,
+    ) -> dict[str, Any]:
         """Build project using SFDK with proper pipeline.
 
         Follows the correct SFDK build pipeline:
@@ -824,7 +824,7 @@ class SFDKWrapper:
 
     async def create_build_directory(
         self, project_path: Path, build_dir_name: str = "build_amogus"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create build directory relative to project.
 
         Args:
@@ -859,7 +859,7 @@ class SFDKWrapper:
             logger.error(f"Error creating build directory: {e}")
             return {"success": False, "error": str(e)}
 
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> dict[str, Any]:
         """Get SFDK wrapper information.
 
         Returns:

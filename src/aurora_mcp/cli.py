@@ -19,7 +19,6 @@ import asyncio
 import logging
 import os
 import sys
-from pathlib import Path
 
 from aurora_mcp.server import create_server
 
@@ -78,7 +77,7 @@ def main():
     )
 
     logger = logging.getLogger(__name__)
-    logger.info(f"Starting Aurora MCP server...")
+    logger.info("Starting Aurora MCP server...")
     logger.info(f"Aurora home: {args.aurora_home}")
     logger.info(f"Transport: {args.transport}")
 

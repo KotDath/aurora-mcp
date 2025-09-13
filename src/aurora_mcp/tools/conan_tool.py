@@ -15,12 +15,11 @@ limitations under the License.
 """
 
 import asyncio
-import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
-from ..decorators import development_status, DevelopmentStatus
+from ..decorators import DevelopmentStatus, development_status
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +44,8 @@ class ConanTool:
         conanfile_path: str,
         profile: str = "aurora",
         build_type: str = "Release",
-        settings: Optional[Dict[str, str]] = None,
-    ) -> Dict[str, Any]:
+        settings: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         """Install dependencies using Conan.
 
         Args:
@@ -124,7 +123,7 @@ class ConanTool:
     @development_status(DevelopmentStatus.NOT_READY)
     async def create_package(
         self, recipe_path: str, package_ref: str, profile: str = "aurora"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create a Conan package.
 
         Args:
@@ -187,8 +186,8 @@ class ConanTool:
 
     @development_status(DevelopmentStatus.NOT_READY)
     async def search_packages(
-        self, pattern: str, remote: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, pattern: str, remote: str | None = None
+    ) -> dict[str, Any]:
         """Search for Conan packages.
 
         Args:
@@ -244,7 +243,7 @@ class ConanTool:
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def create_aurora_profile(self, arch: str = "armv7hl") -> Dict[str, Any]:
+    async def create_aurora_profile(self, arch: str = "armv7hl") -> dict[str, Any]:
         """Create Aurora OS Conan profile.
 
         Args:
@@ -301,7 +300,7 @@ PKG_CONFIG_PATH=/usr/lib/pkgconfig
 CMAKE_TOOLCHAIN_FILE=/usr/share/cmake/aurora-platform-toolchain.cmake
 """
 
-    async def _get_conan_env(self) -> Dict[str, str]:
+    async def _get_conan_env(self) -> dict[str, str]:
         """Get Conan environment variables."""
         import os
 
@@ -309,7 +308,7 @@ CMAKE_TOOLCHAIN_FILE=/usr/share/cmake/aurora-platform-toolchain.cmake
         env["CONAN_USER_HOME"] = str(self.conan_home)
         return env
 
-    async def _get_profile_path(self, profile_name: str) -> Optional[Path]:
+    async def _get_profile_path(self, profile_name: str) -> Path | None:
         """Get path to Conan profile."""
         profile_path = self.profiles_dir / profile_name
         if profile_path.exists():
@@ -337,7 +336,7 @@ CMAKE_TOOLCHAIN_FILE=/usr/share/cmake/aurora-platform-toolchain.cmake
 
         return None
 
-    async def _parse_install_output(self, output: str) -> Dict[str, Any]:
+    async def _parse_install_output(self, output: str) -> dict[str, Any]:
         """Parse conan install output for package information."""
         info = {"packages": []}
 
@@ -355,7 +354,7 @@ CMAKE_TOOLCHAIN_FILE=/usr/share/cmake/aurora-platform-toolchain.cmake
         return info
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def list_installed_packages(self) -> Dict[str, Any]:
+    async def list_installed_packages(self) -> dict[str, Any]:
         """List installed Conan packages.
 
         Returns:
@@ -404,7 +403,7 @@ CMAKE_TOOLCHAIN_FILE=/usr/share/cmake/aurora-platform-toolchain.cmake
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def remove_package(self, package_ref: str) -> Dict[str, Any]:
+    async def remove_package(self, package_ref: str) -> dict[str, Any]:
         """Remove a Conan package.
 
         Args:

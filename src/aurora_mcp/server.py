@@ -17,16 +17,16 @@ limitations under the License.
 import asyncio
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any
 
-from fastmcp import FastMCP, Context
+from fastmcp import Context, FastMCP
 from fastmcp.utilities.logging import configure_logging
 
-from aurora_mcp.tools.qt_build_tool import QtBuildTool
+from aurora_mcp.tools.conan_tool import ConanTool
 from aurora_mcp.tools.flutter_build_tool import FlutterBuildTool
+from aurora_mcp.tools.qt_build_tool import QtBuildTool
 from aurora_mcp.tools.rpm_packaging_tool import RPMPackagingTool
 from aurora_mcp.tools.template_tool import TemplateTool
-from aurora_mcp.tools.conan_tool import ConanTool
 
 # Configure logging
 configure_logging(
@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 class AuroraMCP:
     """Aurora OS MCP Server for development tools."""
 
-    def __init__(self, aurora_home: Optional[str] = None):
+    def __init__(self, aurora_home: str | None = None):
         self.aurora_home = Path(aurora_home or "/opt/aurora-os")
         self.mcp = FastMCP("AuroraMCP")
         self._setup_server()
@@ -82,9 +82,9 @@ class AuroraMCP:
             project_path: str,
             build_type: str = "Release",
             target_arch: str = "armv7hl",
-            build_tool: Optional[str] = None,
+            build_tool: str | None = None,
             build_dir_name: str = "build_amogus",
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Build Qt project for Aurora OS.
 
             Args:
@@ -101,7 +101,7 @@ class AuroraMCP:
         @self.mcp.tool
         async def configure_qt_environment(
             ctx: Context, target_arch: str = "armv7hl"
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Configure Qt build environment for Aurora OS.
 
             Args:
@@ -110,12 +110,12 @@ class AuroraMCP:
             return await self.qt_tool.configure_environment(target_arch)
 
         @self.mcp.tool
-        async def list_qt_targets(ctx: Context) -> Dict[str, Any]:
+        async def list_qt_targets(ctx: Context) -> dict[str, Any]:
             """List available Qt build targets."""
             return await self.qt_tool.list_targets()
 
         @self.mcp.tool
-        async def list_build_tools(ctx: Context) -> Dict[str, Any]:
+        async def list_build_tools(ctx: Context) -> dict[str, Any]:
             """List available build tools and their status."""
             return await self.qt_tool.list_build_tools()
 
@@ -125,7 +125,7 @@ class AuroraMCP:
         @self.mcp.tool
         async def build_flutter_project(
             ctx: Context, project_path: str, target_arch: str = "armv7hl"
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Build Flutter project for Aurora OS.
 
             Args:
@@ -137,7 +137,7 @@ class AuroraMCP:
         @self.mcp.tool
         async def setup_flutter_embedder(
             ctx: Context, target_arch: str = "armv7hl"
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Setup Flutter embedder for Aurora OS.
 
             Args:
@@ -154,7 +154,7 @@ class AuroraMCP:
             spec_file: str,
             source_dir: str,
             output_dir: str = "/tmp/rpmbuild",
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Create RPM package from spec file.
 
             Args:
@@ -166,8 +166,8 @@ class AuroraMCP:
 
         @self.mcp.tool
         async def sign_rpm_package(
-            ctx: Context, rpm_file: str, key_id: Optional[str] = None
-        ) -> Dict[str, Any]:
+            ctx: Context, rpm_file: str, key_id: str | None = None
+        ) -> dict[str, Any]:
             """Sign RPM package.
 
             Args:
@@ -177,7 +177,7 @@ class AuroraMCP:
             return await self.rpm_tool.sign_package(rpm_file, key_id)
 
         @self.mcp.tool
-        async def validate_rpm_package(ctx: Context, rpm_file: str) -> Dict[str, Any]:
+        async def validate_rpm_package(ctx: Context, rpm_file: str) -> dict[str, Any]:
             """Validate RPM package.
 
             Args:
@@ -194,8 +194,8 @@ class AuroraMCP:
             template_url: str,
             project_name: str,
             output_dir: str,
-            template_vars: Optional[Dict[str, str]] = None,
-        ) -> Dict[str, Any]:
+            template_vars: dict[str, str] | None = None,
+        ) -> dict[str, Any]:
             """Create new project from GitLab template.
 
             Args:
@@ -209,7 +209,7 @@ class AuroraMCP:
             )
 
         @self.mcp.tool
-        async def list_available_templates(ctx: Context) -> Dict[str, Any]:
+        async def list_available_templates(ctx: Context) -> dict[str, Any]:
             """List available Aurora OS templates."""
             return await self.template_tool.list_templates()
 
@@ -218,8 +218,8 @@ class AuroraMCP:
 
         @self.mcp.tool
         async def install_conan_dependencies(
-            ctx: Context, conanfile_path: str, profile: Optional[str] = None
-        ) -> Dict[str, Any]:
+            ctx: Context, conanfile_path: str, profile: str | None = None
+        ) -> dict[str, Any]:
             """Install Conan dependencies.
 
             Args:
@@ -231,7 +231,7 @@ class AuroraMCP:
         @self.mcp.tool
         async def create_conan_package(
             ctx: Context, recipe_path: str, package_reference: str
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """Create Conan package.
 
             Args:
@@ -244,7 +244,7 @@ class AuroraMCP:
         """Add server information and health check."""
 
         @self.mcp.tool
-        async def aurora_mcp_info(ctx: Context) -> Dict[str, Any]:
+        async def aurora_mcp_info(ctx: Context) -> dict[str, Any]:
             """Get Aurora MCP server information."""
             return {
                 "server": "Aurora MCP",
@@ -261,7 +261,7 @@ class AuroraMCP:
             }
 
         @self.mcp.tool
-        async def check_aurora_environment(ctx: Context) -> Dict[str, Any]:
+        async def check_aurora_environment(ctx: Context) -> dict[str, Any]:
             """Check Aurora OS development environment status."""
             status = {
                 "psdk_available": (self.aurora_home / "psdk").exists(),
@@ -285,7 +285,7 @@ class AuroraMCP:
 
 
 # Create server instance
-def create_server(aurora_home: Optional[str] = None) -> FastMCP:
+def create_server(aurora_home: str | None = None) -> FastMCP:
     """Create and return Aurora MCP server instance."""
     aurora_mcp = AuroraMCP(aurora_home)
     return aurora_mcp.get_server()

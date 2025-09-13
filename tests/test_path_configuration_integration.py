@@ -15,12 +15,13 @@ limitations under the License.
 """
 
 import os
-import pytest
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from fastmcp import Client
+
 from aurora_mcp.server import create_server
 
 
@@ -122,7 +123,7 @@ async def test_build_tool_selection_with_custom_paths(temp_environment):
                     "cmake_minimum_required(VERSION 3.16)"
                 )
 
-                result = await client.call_tool(
+                await client.call_tool(
                     "build_qt_project",
                     {"project_path": str(project_dir), "build_type": "Release"},
                 )

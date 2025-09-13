@@ -16,19 +16,15 @@ limitations under the License.
 
 # THIS TOOL UNDER DEVELOPMENT
 
-import asyncio
 import logging
-import os
-import subprocess
-import tempfile
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 from urllib.parse import urlparse
 
-import git
 import aiofiles
+import git
 
-from ..decorators import development_status, DevelopmentStatus
+from ..decorators import DevelopmentStatus, development_status
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +50,8 @@ class TemplateTool:
         template_name: str,
         project_name: str,
         output_dir: str = ".",
-        variables: Optional[Dict[str, str]] = None,
-    ) -> Dict[str, Any]:
+        variables: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         """Create a new project from template.
 
         Args:
@@ -110,7 +106,7 @@ class TemplateTool:
             logger.error(f"Error creating project: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _download_template(self, template_url: str) -> Dict[str, Any]:
+    async def _download_template(self, template_url: str) -> dict[str, Any]:
         """Download template from GitLab repository."""
         try:
             # Parse URL to get repo name
@@ -150,8 +146,8 @@ class TemplateTool:
         template_path: Path,
         output_path: Path,
         project_name: str,
-        template_vars: Dict[str, str],
-    ) -> Dict[str, Any]:
+        template_vars: dict[str, str],
+    ) -> dict[str, Any]:
         """Customize template with project-specific values."""
         try:
             # Copy template files
@@ -187,7 +183,7 @@ class TemplateTool:
             return {"success": False, "error": f"Failed to customize template: {e}"}
 
     async def _process_template_files(
-        self, project_path: Path, vars_dict: Dict[str, str]
+        self, project_path: Path, vars_dict: dict[str, str]
     ):
         """Process template files and replace variables."""
         # File extensions to process
@@ -218,7 +214,7 @@ class TemplateTool:
         for file_path in project_path.rglob("*"):
             if file_path.is_file() and file_path.suffix.lower() in text_extensions:
                 try:
-                    async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
+                    async with aiofiles.open(file_path, encoding="utf-8") as f:
                         content = await f.read()
 
                     # Replace template variables
@@ -268,7 +264,7 @@ class TemplateTool:
                 count += 1
         return count
 
-    async def _init_git_repo(self, project_path: Path) -> Dict[str, Any]:
+    async def _init_git_repo(self, project_path: Path) -> dict[str, Any]:
         """Initialize git repository in project."""
         try:
             # Initialize git repo
@@ -285,7 +281,7 @@ class TemplateTool:
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def list_templates(self) -> Dict[str, Any]:
+    async def list_templates(self) -> dict[str, Any]:
         """List available project templates.
 
         Returns:
@@ -340,7 +336,7 @@ class TemplateTool:
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def update_template_cache(self) -> Dict[str, Any]:
+    async def update_template_cache(self) -> dict[str, Any]:
         """Update template cache from remote sources.
 
         Returns:

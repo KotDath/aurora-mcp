@@ -15,10 +15,11 @@ limitations under the License.
 """
 
 import os
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch
+
+import pytest
 
 from aurora_mcp.tools.qt_build_tool import QtBuildTool
 

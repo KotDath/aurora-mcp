@@ -19,14 +19,13 @@ limitations under the License.
 import asyncio
 import logging
 import os
-import subprocess
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
+
 from fastmcp import Context
 
+from ..decorators import DevelopmentStatus, development_status
 from ..utils import SFDKWrapper
-
-from ..decorators import development_status, DevelopmentStatus
 
 logger = logging.getLogger(__name__)
 
@@ -96,10 +95,10 @@ class QtBuildTool:
         project_path: str,
         build_type: str = "Release",
         target_arch: str = "armv7hl",
-        build_tool: Optional[str] = None,
+        build_tool: str | None = None,
         build_dir_name: str = "build_amogus",
-        context: Optional[Context] = None,
-    ) -> Dict[str, Any]:
+        context: Context | None = None,
+    ) -> dict[str, Any]:
         """Build Qt project for Aurora OS using SFDK or PSDK.
 
         This function compiles Qt applications for Aurora OS. Use it when you need to:
@@ -138,7 +137,7 @@ class QtBuildTool:
             if context:
                 await context.error(message)
 
-        await log_info(f"Starting Qt project build...")
+        await log_info("Starting Qt project build...")
         await log_info(f"Project path: {project_path}")
         await log_info(f"Build type: {build_type}, Target arch: {target_arch}")
         await log_info(f"Build tool preference: {build_tool or 'auto-detect'}")
@@ -202,7 +201,7 @@ class QtBuildTool:
 
             # Report final result
             if result.get("success"):
-                await log_info(f"Build completed successfully")
+                await log_info("Build completed successfully")
             else:
                 await log_error(f"Build failed: {result.get('error', 'Unknown error')}")
 
@@ -222,9 +221,7 @@ class QtBuildTool:
         else:
             return "unknown"
 
-    async def _select_build_tool(
-        self, build_tool: Optional[str] = None
-    ) -> Dict[str, Any]:
+    async def _select_build_tool(self, build_tool: str | None = None) -> dict[str, Any]:
         """Select build tool based on environment variable or auto-detection.
 
         Args:
@@ -291,8 +288,8 @@ class QtBuildTool:
         project_type: str,
         build_type: str,
         target_arch: str,
-        context: Optional[Context] = None,
-    ) -> Dict[str, Any]:
+        context: Context | None = None,
+    ) -> dict[str, Any]:
         """Build project using Platform SDK."""
         logger.info(f"Initializing PSDK build for {project_type} project")
         logger.info(f"Target architecture: {target_arch}")
@@ -362,8 +359,8 @@ class QtBuildTool:
             return {"success": False, "error": str(e), "build_tool": "psdk"}
 
     async def _build_cmake_psdk(
-        self, project_dir: Path, build_dir: Path, build_type: str, env: Dict[str, str]
-    ) -> Dict[str, Any]:
+        self, project_dir: Path, build_dir: Path, build_type: str, env: dict[str, str]
+    ) -> dict[str, Any]:
         """Build CMake project with PSDK."""
         commands = [
             # Configure
@@ -438,8 +435,8 @@ class QtBuildTool:
         }
 
     async def _build_qmake_psdk(
-        self, project_dir: Path, build_dir: Path, build_type: str, env: Dict[str, str]
-    ) -> Dict[str, Any]:
+        self, project_dir: Path, build_dir: Path, build_type: str, env: dict[str, str]
+    ) -> dict[str, Any]:
         """Build QMake project with PSDK."""
         logger.info("Looking for .pro files...")
         pro_files = list(project_dir.glob("*.pro"))
@@ -527,8 +524,8 @@ class QtBuildTool:
         build_type: str,
         target_arch: str,
         build_dir_name: str = "build_amogus",
-        context: Optional[Context] = None,
-    ) -> Dict[str, Any]:
+        context: Context | None = None,
+    ) -> dict[str, Any]:
         """Build project using SFDK (Build Engine)."""
         logger.info(f"Initializing SFDK build for {project_type} project")
         logger.info(f"Target architecture: {target_arch}")
@@ -557,7 +554,7 @@ class QtBuildTool:
             logger.error(f"Error building with SFDK: {e}")
             return {"success": False, "error": str(e), "build_tool": "sfdk"}
 
-    async def _get_psdk_environment(self, target_arch: str) -> Dict[str, str]:
+    async def _get_psdk_environment(self, target_arch: str) -> dict[str, str]:
         """Get PSDK environment variables."""
         env = os.environ.copy()
 
@@ -570,7 +567,7 @@ class QtBuildTool:
 
         return env
 
-    async def _find_build_artifacts(self, build_dir: Path) -> List[str]:
+    async def _find_build_artifacts(self, build_dir: Path) -> list[str]:
         """Find build artifacts in build directory."""
         artifacts = []
 
@@ -587,7 +584,7 @@ class QtBuildTool:
     @development_status(DevelopmentStatus.NOT_READY)
     async def configure_environment(
         self, target_arch: str = "armv7hl"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Configure Qt build environment for Aurora OS."""
         try:
             env_info = {
@@ -614,7 +611,7 @@ class QtBuildTool:
             logger.error(f"Error configuring environment: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _check_qt_installation(self, target_arch: str) -> Dict[str, Any]:
+    async def _check_qt_installation(self, target_arch: str) -> dict[str, Any]:
         """Check Qt installation for target architecture."""
         qt_info = {}
 
@@ -640,7 +637,7 @@ class QtBuildTool:
         return qt_info
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def list_targets(self) -> Dict[str, Any]:
+    async def list_targets(self) -> dict[str, Any]:
         """List available Qt build targets."""
         try:
             targets = []
@@ -665,7 +662,7 @@ class QtBuildTool:
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def list_build_tools(self) -> Dict[str, Any]:
+    async def list_build_tools(self) -> dict[str, Any]:
         """List available build tools and their status."""
         try:
             tools = []

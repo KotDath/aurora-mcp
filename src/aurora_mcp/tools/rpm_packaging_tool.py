@@ -19,11 +19,10 @@ limitations under the License.
 import asyncio
 import logging
 import os
-import subprocess
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any
 
-from ..decorators import development_status, DevelopmentStatus
+from ..decorators import DevelopmentStatus, development_status
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +43,7 @@ class RPMPackagingTool:
     @development_status(DevelopmentStatus.NOT_READY)
     async def create_package(
         self, spec_file: str, source_dir: str, target_arch: str = "armv7hl"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create RPM package from spec file and sources.
 
         Args:
@@ -84,7 +83,7 @@ class RPMPackagingTool:
             logger.error(f"Error creating RPM package: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _create_source_tarball(self, source_dir: Path) -> Dict[str, Any]:
+    async def _create_source_tarball(self, source_dir: Path) -> dict[str, Any]:
         """Create source tarball for RPM build."""
         try:
             # Get project name from directory
@@ -118,8 +117,8 @@ class RPMPackagingTool:
             return {"success": False, "error": f"Error creating source tarball: {e}"}
 
     async def _build_rpm(
-        self, spec_file: Path, output_dir: Optional[str]
-    ) -> Dict[str, Any]:
+        self, spec_file: Path, output_dir: str | None
+    ) -> dict[str, Any]:
         """Build RPM package using rpmbuild."""
         try:
             # Prepare rpmbuild command
@@ -177,9 +176,9 @@ class RPMPackagingTool:
     async def sign_package(
         self,
         rpm_file: str,
-        key_id: Optional[str] = None,
-        passphrase: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        key_id: str | None = None,
+        passphrase: str | None = None,
+    ) -> dict[str, Any]:
         """Sign RPM package with GPG key.
 
         Args:
@@ -237,7 +236,7 @@ class RPMPackagingTool:
             logger.error(f"Error signing package: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _verify_signature(self, rpm_file: Path) -> Dict[str, Any]:
+    async def _verify_signature(self, rpm_file: Path) -> dict[str, Any]:
         """Verify RPM package signature."""
         try:
             proc = await asyncio.create_subprocess_exec(
@@ -261,7 +260,7 @@ class RPMPackagingTool:
             return {"success": False, "error": str(e)}
 
     @development_status(DevelopmentStatus.NOT_READY)
-    async def validate_package(self, rpm_file: str) -> Dict[str, Any]:
+    async def validate_package(self, rpm_file: str) -> dict[str, Any]:
         """Validate RPM package integrity and metadata.
 
         Args:
@@ -307,7 +306,7 @@ class RPMPackagingTool:
             logger.error(f"Error validating package: {e}")
             return {"success": False, "error": str(e)}
 
-    async def _get_package_info(self, rpm_file: Path) -> Dict[str, Any]:
+    async def _get_package_info(self, rpm_file: Path) -> dict[str, Any]:
         """Get RPM package information."""
         try:
             proc = await asyncio.create_subprocess_exec(
@@ -329,7 +328,7 @@ class RPMPackagingTool:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def _list_package_files(self, rpm_file: Path) -> Dict[str, Any]:
+    async def _list_package_files(self, rpm_file: Path) -> dict[str, Any]:
         """List files in RPM package."""
         try:
             proc = await asyncio.create_subprocess_exec(
@@ -351,7 +350,7 @@ class RPMPackagingTool:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def _check_dependencies(self, rpm_file: Path) -> Dict[str, Any]:
+    async def _check_dependencies(self, rpm_file: Path) -> dict[str, Any]:
         """Check RPM package dependencies."""
         try:
             proc = await asyncio.create_subprocess_exec(
