@@ -1,0 +1,64 @@
+# Copyright 2025 Daniil Markevich (KotDath)
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3.8'
+
+services:
+  aurora-mcp:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: aurora-mcp-server
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code for development
+      - ../src:/app/src
+      - ../tests:/app/tests
+      # Mount project workspace
+      - ./workspace:/opt/aurora-os/projects
+      # Mount PSDK if available locally
+      - ./psdk:/opt/aurora-os/psdk:ro
+      # Mount SFDK if available locally  
+      - ./sfdk:/opt/aurora-os/sfdk:ro
+    environment:
+      - AURORA_MCP_DEBUG=1
+      - AURORA_MCP_LOG_LEVEL=DEBUG
+      - FASTMCP_LOG_LEVEL=DEBUG
+      - MCP_BUILD_TOOL=sfdk
+      - SFDK_AURORA=/opt/aurora-os/sfdk
+      - PSDK_AURORA=/opt/aurora-os/psdk
+    networks:
+      - aurora-dev
+
+  # Optional: Development tools container
+  aurora-dev-tools:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: aurora-dev-tools
+    volumes:
+      - ../src:/app/src
+      - ./workspace:/opt/aurora-os/projects
+    entrypoint: ["sleep", "infinity"]
+    networks:
+      - aurora-dev
+
+networks:
+  aurora-dev:
+    driver: bridge
+
+volumes:
+  aurora-workspace:
+  aurora-psdk:

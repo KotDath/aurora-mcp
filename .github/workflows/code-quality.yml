@@ -1,0 +1,66 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  aurora-mcp-quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      
+    - name: Check if Python files exist
+      id: check-files
+      run: |
+        if find . -name "*.py" | grep -q .; then
+          echo "has_python_files=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_python_files=false" >> $GITHUB_OUTPUT
+        fi
+      
+    - name: Install dependencies
+      if: steps.check-files.outputs.has_python_files == 'true'
+      run: |
+        if [ -f "pyproject.toml" ]; then
+          uv sync
+        else
+          uv venv
+          source .venv/bin/activate
+          uv pip install ruff mypy
+        fi
+      
+    - name: Run code formatting check
+      if: steps.check-files.outputs.has_python_files == 'true'
+      run: |
+        if [ -f "pyproject.toml" ]; then
+          uv run ruff format --check
+        else
+          source .venv/bin/activate
+          ruff format --check .
+        fi
+      
+    - name: Run linting
+      if: steps.check-files.outputs.has_python_files == 'true'
+      run: |
+        if [ -f "pyproject.toml" ]; then
+          uv run ruff check
+        else
+          source .venv/bin/activate
+          ruff check .
+        fi

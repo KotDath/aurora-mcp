@@ -1,0 +1,87 @@
+[project]
+name = "aurora-mcp"
+dynamic = ["version"]
+description = "Aurora OS MCP server for developers - Qt, Flutter, RPM packaging tools"
+authors = [{ name = "Aurora MCP Developer" }]
+dependencies = [
+    "fastmcp>=2.0.0",
+    "python-dotenv>=1.1.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.11.7",
+    "rich>=13.9.4",
+    "aiofiles>=24.1.0",
+    "gitpython>=3.1.43",
+]
+
+requires-python = ">=3.10"
+readme = "README.md"
+license = "Apache-2.0"
+
+keywords = [
+    "aurora-os",
+    "mcp server", 
+    "qt",
+    "flutter",
+    "rpm",
+    "psdk",
+    "sailfish",
+]
+
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License", 
+    "Topic :: Software Development :: Build Tools",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+    "pytest-asyncio>=0.23.5",
+    "pytest-cov>=6.1.1",
+    "ruff",
+    "pre-commit",
+    "inline-snapshot>=0.27.2",
+]
+
+docs = [
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-autodoc-typehints>=1.25.0",
+    "sphinx-intl>=2.0.0",
+]
+
+[project.scripts]
+aurora-mcp = "aurora_mcp.cli:main"
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aurora_mcp"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+fallback-version = "0.1.0"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"] 
+python_functions = ["test_*"]
+
+[tool.ruff.lint]
+extend-select = ["I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
