@@ -2,7 +2,7 @@
 
 [English](README.md) | [Русский](README.ru.md)
 
-**Aurora OS MCP Server for Developers** - Comprehensive development tools for Aurora OS applications through Model Context Protocol (MCP).
+**Aurora MCP Server для разработчиков** - комплексные инструменты разработки для приложений для ОС Аврора  через Model Context Protocol (MCP).
 
 ## License
 
