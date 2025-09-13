@@ -28,12 +28,12 @@ def temp_aurora_home():
     with tempfile.TemporaryDirectory() as temp_dir:
         aurora_home = Path(temp_dir) / "aurora-test"
         aurora_home.mkdir(parents=True)
-        
+
         # Create basic directory structure
         (aurora_home / "psdk").mkdir()
         (aurora_home / "projects").mkdir()
         (aurora_home / "templates").mkdir()
-        
+
         yield str(aurora_home)
 
 
@@ -48,7 +48,7 @@ async def test_server_info(aurora_server):
     """Test getting server information."""
     async with Client(aurora_server) as client:
         result = await client.call_tool("aurora_mcp_info")
-        
+
         assert result is not None
         assert "server" in result
         assert result["server"] == "Aurora MCP"
@@ -61,7 +61,7 @@ async def test_check_environment(aurora_server):
     """Test environment checking."""
     async with Client(aurora_server) as client:
         result = await client.call_tool("check_aurora_environment")
-        
+
         assert result is not None
         assert "psdk_available" in result
         assert "projects_dir" in result
@@ -72,7 +72,7 @@ async def test_qt_build_targets(aurora_server):
     """Test listing Qt build targets."""
     async with Client(aurora_server) as client:
         result = await client.call_tool("list_qt_targets")
-        
+
         assert result is not None
         assert "success" in result
         assert "targets" in result
@@ -83,7 +83,7 @@ async def test_list_templates(aurora_server):
     """Test listing available templates."""
     async with Client(aurora_server) as client:
         result = await client.call_tool("list_available_templates")
-        
+
         assert result is not None
         assert "success" in result
         assert "templates" in result
