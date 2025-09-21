@@ -32,7 +32,7 @@ def main():
     parser.add_argument(
         "--aurora-home",
         type=str,
-        default=os.getenv("AURORA_MCP_HOME", "/opt/aurora-os"),
+        default=os.getenv("AURORA_MCP_HOME", "~/AuroraOS"),
         help="Aurora OS development environment home directory",
     )
 

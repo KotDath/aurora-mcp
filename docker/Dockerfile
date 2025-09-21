@@ -48,11 +48,11 @@ COPY tests/ ./tests/
 RUN uv sync
 
 # Create Aurora OS development directories
-RUN mkdir -p /opt/aurora-os/{psdk,build-engine,projects}
+RUN mkdir -p ~/AuroraOS/{psdk,build-engine,projects}
 
 # Set environment variables
 ENV PYTHONPATH=/app/src
-ENV AURORA_MCP_HOME=/opt/aurora-os
+ENV AURORA_MCP_HOME=~/AuroraOS
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose MCP server port

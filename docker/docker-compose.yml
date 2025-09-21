@@ -27,18 +27,18 @@ services:
       - ../src:/app/src
       - ../tests:/app/tests
       # Mount project workspace
-      - ./workspace:/opt/aurora-os/projects
+      - ./workspace:~/AuroraOS/projects
       # Mount PSDK if available locally
-      - ./psdk:/opt/aurora-os/psdk:ro
+      - ./psdk:~/AuroraOS/psdk:ro
       # Mount SFDK if available locally  
-      - ./sfdk:/opt/aurora-os/sfdk:ro
+      - ./sfdk:~/AuroraOS/sfdk:ro
     environment:
       - AURORA_MCP_DEBUG=1
       - AURORA_MCP_LOG_LEVEL=DEBUG
       - FASTMCP_LOG_LEVEL=DEBUG
       - MCP_BUILD_TOOL=sfdk
-      - SFDK_AURORA=/opt/aurora-os/sfdk
-      - PSDK_AURORA=/opt/aurora-os/psdk
+      - SFDK_AURORA=~/AuroraOS/sfdk
+      - PSDK_AURORA=~/AuroraOS/psdk
     networks:
       - aurora-dev
 
@@ -50,7 +50,7 @@ services:
     container_name: aurora-dev-tools
     volumes:
       - ../src:/app/src
-      - ./workspace:/opt/aurora-os/projects
+      - ./workspace:~/AuroraOS/projects
     entrypoint: ["sleep", "infinity"]
     networks:
       - aurora-dev
