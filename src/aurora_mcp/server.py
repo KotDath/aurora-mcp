@@ -20,6 +20,8 @@ from pathlib import Path
 from fastmcp import FastMCP
 from fastmcp.utilities.logging import configure_logging
 
+from aurora_mcp.prompts import ALL_PROMPTS
+from aurora_mcp.resources import ALL_RESOURCES
 from aurora_mcp.tools import ALL_TOOLS
 
 # Configure logging
@@ -46,7 +48,17 @@ def create_server(aurora_home: str | None = None) -> FastMCP:
     for tool_func in ALL_TOOLS:
         mcp.tool(tool_func)
 
-    logger.info(f"Aurora MCP server created with {len(ALL_TOOLS)} tools")
+    # Register all prompts manually
+    for prompt_func in ALL_PROMPTS:
+        mcp.prompt(prompt_func)
+
+    # Register all resources manually
+    for resource_func in ALL_RESOURCES:
+        mcp.resource(resource_func)
+
+    logger.info(
+        f"Aurora MCP server created with {len(ALL_TOOLS)} tools, {len(ALL_PROMPTS)} prompts, {len(ALL_RESOURCES)} resources"
+    )
     return mcp
 
 

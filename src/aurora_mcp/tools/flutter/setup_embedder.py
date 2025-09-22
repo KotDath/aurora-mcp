@@ -1,10 +1,8 @@
-from typing import Any
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def setup_flutter_embedder(
@@ -39,7 +37,7 @@ async def setup_flutter_embedder(
             result["recommendations"] = [
                 "Install Flutter SDK for Aurora OS",
                 f"Download Flutter embedder for {target_arch}",
-                "Configure Flutter development environment"
+                "Configure Flutter development environment",
             ]
 
         # Check Flutter SDK

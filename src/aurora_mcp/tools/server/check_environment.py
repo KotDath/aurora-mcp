@@ -1,11 +1,9 @@
-from typing import Any
-from pathlib import Path
 import os
 import shutil
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def check_aurora_environment(ctx: Context) -> dict[str, Any]:
@@ -32,6 +30,7 @@ async def check_aurora_environment(ctx: Context) -> dict[str, Any]:
         if status["sfdk_available"]:
             try:
                 from aurora_mcp.utils.sfdk_wrapper import SFDKWrapper
+
                 sfdk = SFDKWrapper(aurora_home)
                 if sfdk.is_available():
                     version_info = await sfdk.get_version()

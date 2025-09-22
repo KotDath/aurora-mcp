@@ -1,6 +1,6 @@
-from typing import Any
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
 
@@ -43,6 +43,7 @@ def _find_build_tool() -> tuple[str | None, str | None]:
 
     return None, None
 
+
 async def build_qt_project(
     ctx: Context,
     project_path: str,
@@ -72,7 +73,9 @@ async def build_qt_project(
         elif list(project_dir.glob("*.pro")):
             project_type = "qmake"
         else:
-            return {"error": "Unknown project type. Expected CMakeLists.txt or *.pro file"}
+            return {
+                "error": "Unknown project type. Expected CMakeLists.txt or *.pro file"
+            }
 
         # Find build tools using priority search
         tool_path, detected_tool = _find_build_tool()
@@ -82,7 +85,9 @@ async def build_qt_project(
             if detected_tool:
                 build_tool = detected_tool
             else:
-                return {"error": "No build tools available. SFDK not found (check 'auroramcp_sfdk', 'sfdk' env vars, or AURORA_HOME/bin/sfdk) and PSDK not available (check AURORA_HOME/psdk)"}
+                return {
+                    "error": "No build tools available. SFDK not found (check 'auroramcp_sfdk', 'sfdk' env vars, or AURORA_HOME/bin/sfdk) and PSDK not available (check AURORA_HOME/psdk)"
+                }
 
         # Get Aurora home for legacy compatibility
         aurora_home = Path(os.getenv("AURORA_HOME", "~/AuroraOS"))
@@ -103,6 +108,7 @@ async def build_qt_project(
             # Use SFDK wrapper for actual building
             try:
                 from aurora_mcp.utils.sfdk_wrapper import SFDKWrapper
+
                 sfdk = SFDKWrapper(aurora_home)
                 build_result = await sfdk.build_project(
                     Path(project_path), target_arch, build_dir_name, ctx

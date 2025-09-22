@@ -26,8 +26,11 @@ logger = logging.getLogger(__name__)
 # Configure logger for console output (use stderr since stdout is used by MCP)
 if not logger.handlers:
     import sys
+
     handler = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)

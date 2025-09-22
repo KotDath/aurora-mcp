@@ -66,7 +66,7 @@ def main():
         help="Logging level",
     )
 
-    parser.add_argument("--version", action="version", version="Aurora MCP 0.1.0")
+    parser.add_argument("--version", action="version", version="Aurora MCP 0.0.1")
 
     args = parser.parse_args()
 

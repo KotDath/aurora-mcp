@@ -1,10 +1,8 @@
-from typing import Any
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def aurora_mcp_info(ctx: Context) -> dict[str, Any]:
@@ -14,7 +12,7 @@ async def aurora_mcp_info(ctx: Context) -> dict[str, Any]:
 
         return {
             "server": "Aurora MCP",
-            "version": "0.1.0",
+            "version": "0.0.1",
             "aurora_home": str(aurora_home),
             "available_tools": [
                 "Qt Build Tools",
@@ -25,13 +23,25 @@ async def aurora_mcp_info(ctx: Context) -> dict[str, Any]:
             ],
             "supported_architectures": ["armv7hl", "aarch64", "x86_64"],
             "tool_categories": {
-                "qt": ["build_qt_project", "configure_qt_environment", "list_qt_targets", "list_build_tools"],
+                "qt": [
+                    "build_qt_project",
+                    "configure_qt_environment",
+                    "list_qt_targets",
+                    "list_build_tools",
+                ],
                 "flutter": ["build_flutter_project", "setup_flutter_embedder"],
-                "rpm": ["create_rpm_package", "sign_rpm_package", "validate_rpm_package"],
-                "template": ["create_project_from_template", "list_available_templates"],
+                "rpm": [
+                    "create_rpm_package",
+                    "sign_rpm_package",
+                    "validate_rpm_package",
+                ],
+                "template": [
+                    "create_project_from_template",
+                    "list_available_templates",
+                ],
                 "conan": ["install_conan_dependencies", "create_conan_package"],
                 "server": ["aurora_mcp_info", "check_aurora_environment"],
-            }
+            },
         }
 
     except Exception as e:

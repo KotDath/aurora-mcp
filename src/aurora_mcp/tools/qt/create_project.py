@@ -1,9 +1,10 @@
-from typing import Any, Literal
-from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
-import shutil
+from pathlib import Path
+from typing import Any, Literal
+
 from fastmcp import Context
 
 
@@ -19,12 +20,12 @@ async def _replace_in_files(project_dir: Path, old_text: str, new_text: str) -> 
         return
 
     for file_path in project_dir.rglob("*"):
-        if file_path.is_file() and not file_path.name.startswith('.git'):
+        if file_path.is_file() and not file_path.name.startswith(".git"):
             try:
-                content = file_path.read_text(encoding='utf-8')
+                content = file_path.read_text(encoding="utf-8")
                 if old_text in content:
                     new_content = content.replace(old_text, new_text)
-                    file_path.write_text(new_content, encoding='utf-8')
+                    file_path.write_text(new_content, encoding="utf-8")
             except (UnicodeDecodeError, PermissionError):
                 # Skip binary files or files without read permissions
                 continue
@@ -74,7 +75,7 @@ async def create_qt_project(
         if type not in ["cmake", "qmake"]:
             return {
                 "error": "Invalid project type. Must be 'cmake' or 'qmake'",
-                "valid_types": ["cmake", "qmake"]
+                "valid_types": ["cmake", "qmake"],
             }
 
         # Validate organization name format
@@ -82,15 +83,15 @@ async def create_qt_project(
             return {
                 "error": "Invalid organization name format. Must be <domain>.<organization> (e.g., 'ru.auroraos', 'com.mycompany')",
                 "organization_name": organization_name,
-                "expected_format": "<domain>.<organization>"
+                "expected_format": "<domain>.<organization>",
             }
 
         # Validate workspace_dir is absolute path
         if not Path(workspace_dir).is_absolute():
             return {
-                "error": f"Workspace directory must be an absolute path",
+                "error": "Workspace directory must be an absolute path",
                 "workspace_dir": workspace_dir,
-                "note": "Please provide an absolute path like '/home/user/projects' instead of relative path"
+                "note": "Please provide an absolute path like '/home/user/projects' instead of relative path",
             }
 
         # Prepare repository details
@@ -105,7 +106,7 @@ async def create_qt_project(
             return {
                 "error": f"Workspace directory '{workspace_dir}' does not exist",
                 "workspace_dir": workspace_dir,
-                "resolved_path": str(target_dir)
+                "resolved_path": str(target_dir),
             }
 
         # Create temporary directory for cloning
@@ -118,15 +119,15 @@ async def create_qt_project(
             clone_command = ["git", "clone", "-b", branch, repo_url, str(clone_target)]
             try:
                 subprocess.run(
-                    clone_command,
-                    capture_output=True,
-                    text=True,
-                    check=True
+                    clone_command, capture_output=True, text=True, check=True
                 )
                 clone_successful = True
             except subprocess.CalledProcessError as e:
                 # Try to use local templates as fallback
-                template_dir = Path(__file__).parent.parent.parent.parent.parent / "local_templates"
+                template_dir = (
+                    Path(__file__).parent.parent.parent.parent.parent
+                    / "local_templates"
+                )
                 local_template_path = template_dir / f"{type}_template"
 
                 if local_template_path.exists():
@@ -141,18 +142,18 @@ async def create_qt_project(
                         "clone_command": " ".join(clone_command),
                         "workspace_dir": workspace_dir,
                         "local_template_path": str(local_template_path),
-                        "note": "Please check network connection, repository access, or ensure local templates exist"
+                        "note": "Please check network connection, repository access, or ensure local templates exist",
                     }
             except FileNotFoundError:
                 return {
                     "error": "Git command not found. Please install Git.",
-                    "required_command": "git"
+                    "required_command": "git",
                 }
 
             # Check for conflicts before copying
             conflicts = []
             for item in clone_target.iterdir():
-                if item.name == '.git':
+                if item.name == ".git":
                     # Skip .git directory
                     continue
                 dest = target_dir / item.name
@@ -161,15 +162,15 @@ async def create_qt_project(
 
             if conflicts:
                 return {
-                    "error": f"Cannot create project: conflicting files/directories already exist",
+                    "error": "Cannot create project: conflicting files/directories already exist",
                     "conflicts": conflicts,
                     "workspace_dir": workspace_dir,
-                    "note": "Please remove or rename the conflicting items and try again"
+                    "note": "Please remove or rename the conflicting items and try again",
                 }
 
             # Move contents from cloned repo to target directory
             for item in clone_target.iterdir():
-                if item.name == '.git':
+                if item.name == ".git":
                     # Skip .git directory
                     continue
                 dest = target_dir / item.name
@@ -184,22 +185,21 @@ async def create_qt_project(
 
         # Rename files if application name is not default
         await _rename_files(target_dir, "ApplicationTemplate", application_name)
-        
+
         # Rename files if organization name is not default (for files containing organization name)
         await _rename_files(target_dir, "ru.auroraos", organization_name)
 
         # Determine the source used for the project
-        source_info = {
-            "url": repo_url,
-            "branch": branch
-        }
+        source_info = {"url": repo_url, "branch": branch}
         if not clone_successful:
-            template_dir = Path(__file__).parent.parent.parent.parent.parent / "local_templates"
+            template_dir = (
+                Path(__file__).parent.parent.parent.parent.parent / "local_templates"
+            )
             local_template_path = template_dir / f"{type}_template"
             source_info = {
                 "source": "local_template",
                 "path": str(local_template_path),
-                "note": "Used local template due to network/repository issues"
+                "note": "Used local template due to network/repository issues",
             }
 
         return {
@@ -214,12 +214,13 @@ async def create_qt_project(
             "customizations": {
                 "replaced_app_name": application_name != "ApplicationTemplate",
                 "replaced_org_name": organization_name != "ru.auroraos",
-                "renamed_files": application_name != "ApplicationTemplate" or organization_name != "ru.auroraos"
+                "renamed_files": application_name != "ApplicationTemplate"
+                or organization_name != "ru.auroraos",
             },
             "next_steps": [
                 "Review and modify the project as needed",
-                "Build the project using Aurora MCP build tools"
-            ]
+                "Build the project using Aurora MCP build tools",
+            ],
         }
 
     except Exception as e:
@@ -227,5 +228,5 @@ async def create_qt_project(
             "error": f"Unexpected error creating Qt project: {str(e)}",
             "project_type": type,
             "organization_name": organization_name,
-            "application_name": application_name
+            "application_name": application_name,
         }

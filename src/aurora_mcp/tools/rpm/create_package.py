@@ -1,10 +1,7 @@
-from typing import Any
 from pathlib import Path
-import subprocess
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def create_rpm_package(
@@ -34,9 +31,12 @@ async def create_rpm_package(
         # Basic rpmbuild command
         rpmbuild_cmd = [
             "rpmbuild",
-            "--define", f"_topdir {output_path}",
-            "--define", f"_sourcedir {source_path}",
-            "-ba", str(spec_path)
+            "--define",
+            f"_topdir {output_path}",
+            "--define",
+            f"_sourcedir {source_path}",
+            "-ba",
+            str(spec_path),
         ]
 
         return {
@@ -52,7 +52,7 @@ async def create_rpm_package(
                 "BUILD": str(output_path / "BUILD"),
                 "RPMS": str(output_path / "RPMS"),
                 "SRPMS": str(output_path / "SRPMS"),
-            }
+            },
         }
 
     except Exception as e:

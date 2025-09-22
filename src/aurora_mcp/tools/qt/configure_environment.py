@@ -1,10 +1,8 @@
-from typing import Any
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def configure_qt_environment(
@@ -32,7 +30,7 @@ async def configure_qt_environment(
         if psdk_path.exists():
             env_status["psdk_path"] = str(psdk_path)
             # Check for Qt in PSDK
-            qt_dirs = list(psdk_path.glob(f"**/qt*/include/QtCore"))
+            qt_dirs = list(psdk_path.glob("**/qt*/include/QtCore"))
             if qt_dirs:
                 env_status["qt_installed"] = True
                 env_status["qt_path"] = str(qt_dirs[0].parent.parent)
@@ -49,6 +47,7 @@ async def configure_qt_environment(
         if env_status["sfdk_available"]:
             try:
                 from aurora_mcp.utils.sfdk_wrapper import SFDKWrapper
+
                 sfdk = SFDKWrapper(aurora_home)
                 if sfdk.is_available():
                     version_info = await sfdk.get_version()

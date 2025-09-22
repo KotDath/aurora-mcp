@@ -1,10 +1,8 @@
-from typing import Any
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Any
 
 from fastmcp import Context
-from aurora_mcp.decorators import DevelopmentStatus, development_status
-
 
 
 async def list_build_tools(ctx: Context) -> dict[str, Any]:
@@ -26,6 +24,7 @@ async def list_build_tools(ctx: Context) -> dict[str, Any]:
             sfdk_info["path"] = str(aurora_home / "sfdk")
             try:
                 from aurora_mcp.utils.sfdk_wrapper import SFDKWrapper
+
                 sfdk = SFDKWrapper(aurora_home)
                 if sfdk.is_available():
                     version_info = await sfdk.get_version()
@@ -68,7 +67,9 @@ async def list_build_tools(ctx: Context) -> dict[str, Any]:
             tools_status["recommendation"] = f"Using {available_tools[0]['name']}"
             tools_status["status"] = "single_tool"
         else:
-            tools_status["recommendation"] = "Multiple tools available, SFDK recommended for new projects"
+            tools_status["recommendation"] = (
+                "Multiple tools available, SFDK recommended for new projects"
+            )
             tools_status["status"] = "multiple_tools"
 
         return tools_status
