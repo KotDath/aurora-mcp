@@ -32,7 +32,7 @@ def main():
     parser.add_argument(
         "--aurora-home",
         type=str,
-        default=os.getenv("AURORA_MCP_HOME", "/opt/aurora-os"),
+        default=os.getenv("AURORA_MCP_HOME", "~/AuroraOS"),
         help="Aurora OS development environment home directory",
     )
 
@@ -66,7 +66,7 @@ def main():
         help="Logging level",
     )
 
-    parser.add_argument("--version", action="version", version="Aurora MCP 0.1.0")
+    parser.add_argument("--version", action="version", version="Aurora MCP 0.0.1")
 
     args = parser.parse_args()
 

@@ -23,6 +23,18 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Configure logger for console output (use stderr since stdout is used by MCP)
+if not logger.handlers:
+    import sys
+
+    handler = logging.StreamHandler(sys.stderr)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+
 
 class SFDKOutputFilter:
     """Filter SFDK output to show only important messages."""
@@ -197,7 +209,7 @@ class SFDKWrapper:
         Args:
             aurora_home: Path to Aurora OS installation directory
         """
-        self.aurora_home = aurora_home or Path("/opt/aurora-os")
+        self.aurora_home = aurora_home or Path("~/AuroraOS")
 
         # Configure SFDK path from environment or default
         sfdk_env = os.getenv("SFDK_AURORA") or os.getenv("SFDK")
