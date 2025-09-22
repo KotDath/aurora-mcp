@@ -1,8 +1,9 @@
 [project]
 name = "aurora-mcp"
-dynamic = ["version"]
+version = "0.0.1"
 description = "Aurora OS MCP server for developers - Qt, Flutter, RPM packaging tools"
-authors = [{ name = "Aurora MCP Developer" }]
+authors = [{ name = "Daniil Markevich", email = "kotdath@yandex.ru" }]
+maintainers = [{ name = "Daniil Markevich", email = "kotdath@yandex.ru" }]
 dependencies = [
     "fastmcp>=2.0.0",
     "python-dotenv>=1.1.0",
@@ -19,7 +20,7 @@ license = "Apache-2.0"
 
 keywords = [
     "aurora-os",
-    "mcp server", 
+    "mcp server",
     "qt",
     "flutter",
     "rpm",
@@ -29,13 +30,25 @@ keywords = [
 
 classifiers = [
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License", 
+    "License :: OSI Approved :: Apache Software License",
     "Topic :: Software Development :: Build Tools",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
+
+[project.urls]
+Homepage = "https://github.com/KotDath/aurora-mcp"
+Repository = "https://github.com/KotDath/aurora-mcp"
+Issues = "https://github.com/KotDath/aurora-mcp/issues"
+Documentation = "https://github.com/KotDath/aurora-mcp"
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
 
 [dependency-groups]
 dev = [
@@ -58,20 +71,11 @@ docs = [
 aurora-mcp = "aurora_mcp.cli:main"
 
 [build-system]
-requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/aurora_mcp"]
-
-[tool.hatch.version]
-source = "uv-dynamic-versioning"
-
-[tool.uv-dynamic-versioning]
-vcs = "git"
-style = "pep440"
-bump = true
-fallback-version = "0.0.1"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
