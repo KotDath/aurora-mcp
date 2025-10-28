@@ -100,6 +100,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "tokio-util",
  "tower-http",
  "tracing",
  "tracing-subscriber",
@@ -799,6 +800,7 @@ name = "rmcp"
 version = "0.8.3"
 source = "git+https://github.com/modelcontextprotocol/rust-sdk?branch=main#9012709079b6b0431863f7d8c4ed9c8c49926c09"
 dependencies = [
+ "axum",
  "base64",
  "bytes",
  "chrono",

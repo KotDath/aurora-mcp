@@ -8,6 +8,7 @@ use tower_http::cors::{CorsLayer, Any};
 use chrono;
 
 mod aurora_server;
+mod sse_server;
 
 /// Command line arguments for Aurora MCP Server
 #[derive(Parser, Debug)]
@@ -15,10 +16,10 @@ mod aurora_server;
     name = "aurora-mcp",
     version = env!("CARGO_PKG_VERSION"),
     about = "Aurora OS MCP Server - Demo implementation with hello world tool",
-    long_about = "A Model Context Protocol (MCP) server for Aurora OS that can run in both STDIO and HTTP modes. Supports tools for greetings and server information."
+    long_about = "A Model Context Protocol (MCP) server for Aurora OS that can run in STDIO, HTTP, and SSE modes. Supports tools for greetings and server information."
 )]
 struct Args {
-    /// Transport mode: stdio or http
+    /// Transport mode: stdio, http, or sse
     #[arg(
         short = 't',
         long = "transport",
@@ -27,28 +28,28 @@ struct Args {
     )]
     transport: TransportMode,
 
-    /// Host address for HTTP mode (only used with --transport http)
+    /// Host address for HTTP/SSE modes (used with --transport http or --transport sse)
     #[arg(
         short = 'H',
         long = "host",
         default_value = "127.0.0.1",
-        help = "Host address to bind HTTP server to"
+        help = "Host address to bind server to"
     )]
     host: String,
 
-    /// Port for HTTP mode (only used with --transport http)
+    /// Port for HTTP/SSE modes (used with --transport http or --transport sse)
     #[arg(
         short = 'p',
         long = "port",
         default_value = "3000",
-        help = "Port to bind HTTP server to"
+        help = "Port to bind server to"
     )]
     port: u16,
 
-    /// Enable CORS for HTTP mode (only used with --transport http)
+    /// Enable CORS for HTTP/SSE modes (used with --transport http or --transport sse)
     #[arg(
         long = "cors",
-        help = "Enable Cross-Origin Resource Sharing for HTTP mode"
+        help = "Enable Cross-Origin Resource Sharing"
     )]
     cors: bool,
 
@@ -68,6 +69,8 @@ enum TransportMode {
     Stdio,
     /// Use HTTP transport (REST API mode)
     Http,
+    /// Use Server-Sent Events transport (real-time web mode)
+    Sse,
 }
 
 #[tokio::main]
@@ -152,6 +155,15 @@ async fn main() -> Result<()> {
                     tracing::info!("Received shutdown signal");
                 })
                 .await;
+        }
+        TransportMode::Sse => {
+            let addr: SocketAddr = format!("{}:{}", args.host, args.port).parse()
+                .map_err(|e| anyhow::anyhow!("Invalid address {}: {}", args.host, e))?;
+
+            tracing::info!("Starting SSE transport mode on {}", addr);
+
+            // Use the SSE server module
+            sse_server::create_sse_server(server, addr, args.cors).await?;
         }
     }
 

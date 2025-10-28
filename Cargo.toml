@@ -13,6 +13,7 @@ rmcp = { git = "https://github.com/modelcontextprotocol/rust-sdk", branch = "mai
     "macros",
     "transport-io",
     "transport-streamable-http-server",
+    "transport-sse-server",
 ] }
 
 # For HTTP server implementation
@@ -56,3 +57,6 @@ clap = { version = "4.0", features = ["derive"] }
 
 # Time handling for health checks
 chrono = { version = "0.4", features = ["serde"] }
+
+# For cancellation token support
+tokio-util = "0.7"
